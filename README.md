@@ -20,6 +20,7 @@ Given a prompt like `"What is the sum of 2 and 3?"`, the program does not return
 
 The system uses the **Qwen/Qwen3-0.6B** model (500M parameters) together with **constrained decoding** to guarantee 100% valid JSON output, achieving near-perfect reliability even with a small model.
 
+![Diagrama del flujo](assets/diagram.svg)
 ---
 
 ## Instructions
@@ -168,11 +169,3 @@ Example output `function_calling_results.json`:
 
 ---
 
-## Resources
-
-### References
-
-- [Constrained Decoding — Hugging Face Blog](https://huggingface.co/blog/constrained-beam-search)
-- [Function Calling in LLMs — OpenAI](https://platform.openai.com/docs/guides/function-calling)
-- AI was used understanding the concept of constrained decoding and how to implement it, solving environment
-    configuration issues (uv, dependencies, paths), fixing errors.
