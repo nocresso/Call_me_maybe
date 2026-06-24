@@ -94,33 +94,11 @@ For each argument of the selected function, a new prompt is built and generation
 
 ---
 
-## Design Decisions
-
-- **Separation of concerns**: the code is split into `input_validation.py` (parsing), `llm_caller.py` (LLM logic) and `output_writer.py` (writing results).
-- **Pydantic for validation**: all data classes use pydantic's `BaseModel` to guarantee correct types at runtime.
-- **Single model and vocabulary load**: the model and vocabulary are loaded once in `__main__.py` and passed as parameters, avoiding costly reloads for each prompt.
-
----
-
 ## Performance Analysis
 
 - **Accuracy**: constrained decoding guarantees the function name is always valid and arguments always have the correct type.
 - **Speed**: the Qwen3-0.6B model on CPU takes approximately 2 minutes per prompt. On GPU the time is significantly reduced, taking approximately 5 minutes for 11 prompts.
 - **JSON reliability**: 100% — constrained decoding makes it impossible to generate malformed JSON.
-
----
-
-## Challenges
-
-- **Constrained decoding** for string arguments was the hardest part. The first approach restricted string generation heavily, which caused the model to loop indefinitely on complex strings like regex patterns or sentences with special characters — the closing quote logit was always lower than content tokens so the model never stopped. The fix was to remove all restrictions for strings and just set a maximum token limit, letting the model generate freely until it closes the string or the limit is reached.
-- **Stopping condition for numbers** was also tricky. Numbers end when , or } appears, but those characters needed to be both allowed during generation (so the model could produce them) and used as stop signals, then stripped from the final value. Getting that logic right without cutting valid digits took several iterations.
----
-
-## Testing Strategy
-
-- Input parsing was tested separately before integrating the LLM, using simulated results to verify the full flow.
-- The output JSON format was validated against the subject schema.
-- Edge cases were tested: ambiguous prompts, large numbers, strings with special characters.
 
 ---
 
